@@ -6,7 +6,8 @@ services:
     ports:
       - "8085:8080"
     depends_on:
-      - config
+      config:
+        condition: service_healthy
     links:
       - config
     networks:
@@ -39,6 +40,13 @@ services:
       - "8888:8080"
     networks:
       - ansis-network
+    healthcheck:
+      test: curl --fail http://localhost:8080/accounts/dev || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 20
+      start_period: 5s
+
 
 networks:
   ansis-network:
