@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  accounts:
+    image: accounts
+    ports:
+      - "8085:8080"
+    depends_on:
+      - config
+    links:
+      - config
+    networks:
+      - ansis-network
+
+  loans:
+    image: loans
+    ports:
+      - "8082:8080"
+    networks:
+      - ansis-network
+
+  cards:
+    image: cards
+    ports:
+      - "8083:8080"
+    networks:
+      - ansis-network
+
+  helloworld:
+    image: helloworld
+    ports:
+      - "8084:8080"
+    networks:
+      - ansis-network
+
+  config:
+    image: config
+    ports:
+      - "8888:8080"
+    networks:
+      - ansis-network
+
+networks:
+  ansis-network:
