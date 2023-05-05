@@ -8,6 +8,8 @@ services:
     depends_on:
       config:
         condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
     links:
       - config
     deploy:
@@ -17,8 +19,17 @@ services:
         max_attempts: 5
         window: 180s
     environment:
-      SPRING_PROFILES_ACTIVE: dev
-      SPRING_CONFIG_IMPORT: configserver:http://config:8080/
+      - spring.profiles.active=dev
+      - spring.config.import=configserver:http://config:8080/
+      - eureka.instance.preferIpAddress=true
+      - eureka.client.fetchRegistry=true
+      - eureka.client.serviceUrl.defaultZone=http://eurekaserver:8080/eureka/
+#      SPRING_PROFILES_ACTIVE: dev
+#      SPRING_CONFIG_IMPORT: configserver:http://config:8080/
+#      EUREKA_INSTANCE_PREFERIPADDRESS:  true
+#      EUREKA_CLIENT_REGISTERWITHEUREKA: true
+#      EUREKA_CLIENT_FETCHREGISTRY: true
+#      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8080/eureka/
     networks:
       - ansis-network
 
@@ -37,6 +48,12 @@ services:
         delay: 5s
         max_attempts: 5
         window: 180s
+    healthcheck:
+      test: curl --fail http://localhost:8080/ || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 20
+      start_period: 5s
     environment:
       SPRING_PROFILES_ACTIVE: dev
       SPRING_CONFIG_IMPORT: configserver:http://config:8080/
