@@ -1,0 +1,61 @@
+version: "3.8"
+
+services:
+  accounts:
+    image: accounts
+    ports:
+      - "8089:8080"
+    depends_on:
+      config:
+        condition: service_healthy
+    links:
+      - config
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+        window: 180s
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_CONFIG_IMPORT: configserver:http://config:8080/
+    networks:
+      - ansis-network2
+
+  loans:
+    image: loans
+    ports:
+      - "8086:8080"
+    networks:
+      - ansis-network2
+
+  cards:
+    image: cards
+    ports:
+      - "8087:8080"
+    networks:
+      - ansis-network2
+
+  helloworld:
+    image: helloworld
+    ports:
+      - "8088:8080"
+    networks:
+      - ansis-network2
+
+  config:
+    image: config
+    ports:
+      - "8889:8080"
+    networks:
+      - ansis-network2
+    healthcheck:
+      test: curl --fail http://localhost:8080/accounts/prod || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 20
+      start_period: 5s
+
+
+networks:
+  ansis-network2:

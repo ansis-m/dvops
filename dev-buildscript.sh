@@ -25,5 +25,5 @@ docker build --cache-from config ./config -t config
 
 
 printf "\n running docker compose...\n"
-docker-compose -f ./docker-compose/prod/docker-compose.yml up --detach
+docker-compose -f ./docker-compose/dev/docker-compose.yml up --detach
 
