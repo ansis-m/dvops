@@ -8,6 +8,8 @@ services:
     depends_on:
       config:
         condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
     links:
       - config
     deploy:
@@ -18,17 +20,24 @@ services:
         window: 180s
     environment:
       - spring.profiles.active=prod
+      - spring.application.name=accounts
       - spring.config.import=configserver:http://config:8080/
-#      SPRING_PROFILES_ACTIVE: prod
-#      SPRING_CONFIG_IMPORT: configserver:http://config:8080/
-#      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: *
+      - eureka.instance.preferIpAddress=true
+      - eureka.client.fetchRegistry=true
+      - eureka.client.serviceUrl.defaultZone=http://eurekaserver:8080/eureka/
+      - management.info.env.enabled=true
+      - info.app.name=accounts
+      - info.app.description=AccountsDescription
+      - info.app.version=1.0.0
+      - endpoints.shutdown.enabled=true
+      - management.endpoint.shutdown.enabled=true
     networks:
       - ansis-network2
 
   eurekaserver:
     image: eurekaserver
     ports:
-      - "9000:8080"
+      - "9001:8080"
     depends_on:
       config:
         condition: service_healthy
@@ -40,11 +49,17 @@ services:
         delay: 5s
         max_attempts: 5
         window: 180s
+    healthcheck:
+      test: curl --fail http://localhost:8080/ || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 20
+      start_period: 5s
     environment:
-      SPRING_PROFILES_ACTIVE: prod
+      SPRING_PROFILES_ACTIVE: dev
       SPRING_CONFIG_IMPORT: configserver:http://config:8080/
     networks:
-      - ansis-network
+      - ansis-network2
 
   loans:
     image: loans
@@ -52,6 +67,24 @@ services:
       - "8086:8080"
     networks:
       - ansis-network2
+    environment:
+      - spring.profiles.active=prod
+      - spring.application.name=loans
+      - spring.config.import=configserver:http://config:8080/
+      - eureka.instance.preferIpAddress=true
+      - eureka.client.fetchRegistry=true
+      - eureka.client.serviceUrl.defaultZone=http://eurekaserver:8080/eureka/
+      - management.info.env.enabled=true
+      - info.app.name=loans
+      - info.app.description=LoansDescription
+      - info.app.version=1.0.0
+      - endpoints.shutdown.enabled=true
+      - management.endpoint.shutdown.enabled=true
+    depends_on:
+      config:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
 
   cards:
     image: cards
@@ -59,6 +92,24 @@ services:
       - "8087:8080"
     networks:
       - ansis-network2
+    environment:
+      - spring.profiles.active=prod
+      - spring.application.name=cards
+      - spring.config.import=configserver:http://config:8080/
+      - eureka.instance.preferIpAddress=true
+      - eureka.client.fetchRegistry=true
+      - eureka.client.serviceUrl.defaultZone=http://eurekaserver:8080/eureka/
+      - management.info.env.enabled=true
+      - info.app.name=cards
+      - info.app.description=CardsDescription
+      - info.app.version=1.0.0
+      - endpoints.shutdown.enabled=true
+      - management.endpoint.shutdown.enabled=true
+    depends_on:
+      config:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
 
   helloworld:
     image: helloworld
@@ -66,6 +117,24 @@ services:
       - "8088:8080"
     networks:
       - ansis-network2
+    environment:
+      - spring.profiles.active=prod
+      - spring.application.name=helloworld
+      - spring.config.import=configserver:http://config:8080/
+      - eureka.instance.preferIpAddress=true
+      - eureka.client.fetchRegistry=true
+      - eureka.client.serviceUrl.defaultZone=http://eurekaserver:8080/eureka/
+      - management.info.env.enabled=true
+      - info.app.name=HelloWorld
+      - info.app.description=HelloWorldDescription
+      - info.app.version=1.0.0
+      - endpoints.shutdown.enabled=true
+      - management.endpoint.shutdown.enabled=true
+    depends_on:
+      config:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
 
   config:
     image: config
@@ -74,7 +143,7 @@ services:
     networks:
       - ansis-network2
     healthcheck:
-      test: curl --fail http://localhost:8080/accounts/prod || exit 1
+      test: curl --fail http://localhost:8080/accounts/dev || exit 1
       interval: 10s
       timeout: 10s
       retries: 20

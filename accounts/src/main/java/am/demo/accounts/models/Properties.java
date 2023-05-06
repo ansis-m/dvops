@@ -13,8 +13,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class Properties {
 
-    private String msg;
-    private String buildVersion;
+    private String msg, buildVersion;
     private Map<String, String> ansis;
     private List<String> activeBranches;
 

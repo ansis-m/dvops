@@ -20,14 +20,9 @@ public class LoansController {
     private LoansRepository loansRepository;
 
     @PostMapping("/myLoans")
-    public List<Loans> getLoansDetails(@RequestBody Customer customer) {
-        List<Loans> loans = loansRepository.findByCustomerIdOrderByStartDtDesc(customer.getCustomerId());
-        if (loans != null) {
-            return loans;
-        } else {
-            return null;
-        }
+    String getLoansDetails(@RequestBody Integer integer) {
 
+        return "Hello from loans. Received int: " + integer;
     }
 
     @GetMapping

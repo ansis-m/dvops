@@ -5,10 +5,13 @@ import am.demo.accounts.model.Accounts;
 import am.demo.accounts.model.Customer;
 import am.demo.accounts.models.Properties;
 import am.demo.accounts.repository.AccountsRepository;
+import am.demo.accounts.service.client.CardsFeignClient;
+import am.demo.accounts.service.client.LoansFeignClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,6 +23,11 @@ public class AccountsController {
 
     private final AccountsRepository accountsRepository;
     private final AccountsServiceConfig accountsConfig;
+
+    @Autowired
+    private final CardsFeignClient cardsFeignClient;
+    @Autowired
+    private final LoansFeignClient loansFeignClient;
 
     @PostMapping("/myAccount")
     public Accounts getAccountDetails(@RequestBody Customer customer) {
@@ -50,4 +58,12 @@ public class AccountsController {
         return jsonStr;
 
     }
+
+    @PostMapping("/client")
+    public String fetchFrom(@RequestBody Integer integer){
+
+        return cardsFeignClient.getCardDetails() + "~~~~~" + loansFeignClient.getLoanDetails(integer);
+
+    }
+
 }

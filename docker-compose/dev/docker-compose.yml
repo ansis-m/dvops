@@ -20,10 +20,17 @@ services:
         window: 180s
     environment:
       - spring.profiles.active=dev
+      - spring.application.name=accounts
       - spring.config.import=configserver:http://config:8080/
       - eureka.instance.preferIpAddress=true
       - eureka.client.fetchRegistry=true
       - eureka.client.serviceUrl.defaultZone=http://eurekaserver:8080/eureka/
+      - management.info.env.enabled=true
+      - info.app.name=Accounts
+      - info.app.description=AccountsDescription
+      - info.app.version=1.0.0
+      - endpoints.shutdown.enabled=true
+      - management.endpoint.shutdown.enabled=true
 #      SPRING_PROFILES_ACTIVE: dev
 #      SPRING_CONFIG_IMPORT: configserver:http://config:8080/
 #      EUREKA_INSTANCE_PREFERIPADDRESS:  true
@@ -66,6 +73,24 @@ services:
       - "8082:8080"
     networks:
       - ansis-network
+    environment:
+      - spring.profiles.active=dev
+      - spring.application.name=loans
+      - eureka.instance.preferIpAddress=true
+      - eureka.client.fetchRegistry=true
+      - eureka.client.serviceUrl.defaultZone=http://eurekaserver:8080/eureka/
+      - management.info.env.enabled=true
+      - info.app.name=Loans
+      - info.app.description=LoansDescription
+      - info.app.version=1.0.0
+      - endpoints.shutdown.enabled=true
+      - management.endpoint.shutdown.enabled=true
+      - spring.config.import=configserver:http://config:8080/
+    depends_on:
+      config:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
 
   cards:
     image: cards
@@ -73,6 +98,24 @@ services:
       - "8083:8080"
     networks:
       - ansis-network
+    environment:
+      - spring.profiles.active=dev
+      - spring.application.name=cards
+      - eureka.instance.preferIpAddress=true
+      - eureka.client.fetchRegistry=true
+      - eureka.client.serviceUrl.defaultZone=http://eurekaserver:8080/eureka/
+      - management.info.env.enabled=true
+      - info.app.name=Cards
+      - info.app.description=CardsDescription
+      - info.app.version=1.0.0
+      - endpoints.shutdown.enabled=true
+      - management.endpoint.shutdown.enabled=true
+      - spring.config.import=configserver:http://config:8080/
+    depends_on:
+      config:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
 
   helloworld:
     image: helloworld
@@ -80,6 +123,24 @@ services:
       - "8084:8080"
     networks:
       - ansis-network
+    environment:
+      - spring.profiles.active=dev
+      - spring.application.name=helloworld
+      - eureka.instance.preferIpAddress=true
+      - eureka.client.fetchRegistry=true
+      - eureka.client.serviceUrl.defaultZone=http://eurekaserver:8080/eureka/
+      - management.info.env.enabled=true
+      - info.app.name=HelloWorld
+      - info.app.description=HelloWorldDescription
+      - info.app.version=1.0.0
+      - endpoints.shutdown.enabled=true
+      - management.endpoint.shutdown.enabled=true
+      - spring.config.import=configserver:http://config:8080/
+    depends_on:
+      config:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
 
   config:
     image: config
