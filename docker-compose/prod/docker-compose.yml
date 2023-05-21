@@ -34,6 +34,39 @@ services:
     networks:
       - ansis-network2
 
+  accounts1:
+    image: accounts
+    ports:
+      - "8090:8080"
+    depends_on:
+      config:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
+    links:
+      - config
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+        window: 180s
+    environment:
+      - spring.profiles.active=prod
+      - spring.application.name=accounts
+      - spring.config.import=configserver:http://config:8080/
+      - eureka.instance.preferIpAddress=true
+      - eureka.client.fetchRegistry=true
+      - eureka.client.serviceUrl.defaultZone=http://eurekaserver:8080/eureka/
+      - management.info.env.enabled=true
+      - info.app.name=accounts
+      - info.app.description=AccountsDescription
+      - info.app.version=1.0.0
+      - endpoints.shutdown.enabled=true
+      - management.endpoint.shutdown.enabled=true
+    networks:
+      - ansis-network2
+
   eurekaserver:
     image: eurekaserver
     ports:

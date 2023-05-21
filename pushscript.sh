@@ -14,3 +14,6 @@ docker push ansism/config
 
 docker tag helloworld ansism/helloworld
 docker push ansism/helloworld
+
+docker tag eurekaserver ansism/eurekaserver
+docker push ansism/eurekaserver
